@@ -10,11 +10,10 @@ setup(
         "matplotlib",  # this is only used once in the core checkmate package
         "numpy",
         "pandas",
-        "tensorflow>=2.0.0",
         "toposort",
+        "psutil",
     ],
     extras_require={
-        "gpu": ["tensorflow-gpu>=2.0.0"],
         "eval": [
             "graphviz",
             "keras_segmentation @ https://github.com/ajayjain/image-segmentation-keras/archive/master.zip#egg=keras_segmentation-0.2.0remat",
@@ -25,6 +24,6 @@ setup(
             "seaborn",
             "tqdm",
         ],
-        "test": ["graphviz", "pytest"],
+        "test": ["graphviz", "pytest", "tensorflow>=2.0.0"],
     },
 )
