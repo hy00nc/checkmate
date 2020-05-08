@@ -9,9 +9,10 @@ KERAS_APPLICATION_MODEL_NAMES = ['InceptionV3', 'VGG16', 'VGG19', 'ResNet50',
                                  'DenseNet169', 'DenseNet201', 'NASNetMobile', 'NASNetLarge',
                                  'ResNet101', 'ResNet152', 'ResNet50V2', 'ResNet101V2',
                                  'ResNet152V2']
-SEGMENTATION_MODEL_NAMES = list(keras_segmentation.models.model_from_name.keys())
+#SEGMENTATION_MODEL_NAMES = list(keras_segmentation.models.model_from_name.keys())
 LINEAR_MODEL_NAMES = ["linear" + str(i) for i in range(32)]
-MODEL_NAMES = KERAS_APPLICATION_MODEL_NAMES + SEGMENTATION_MODEL_NAMES + ["test"] + LINEAR_MODEL_NAMES
+#MODEL_NAMES = KERAS_APPLICATION_MODEL_NAMES + SEGMENTATION_MODEL_NAMES + ["test"] + LINEAR_MODEL_NAMES
+MODEL_NAMES = KERAS_APPLICATION_MODEL_NAMES + ["test"] + LINEAR_MODEL_NAMES
 CHAIN_GRAPH_MODELS = ["VGG16", "VGG19", "MobileNet"] + LINEAR_MODEL_NAMES
 NUM_SEGMENTATION_CLASSES = 19  # Cityscapes has 19 evaluation classes
 
@@ -55,13 +56,13 @@ def get_keras_model(model_name: str, input_shape: Optional[List[int]] = None):
     elif model_name in KERAS_APPLICATION_MODEL_NAMES:
         model = eval("tf.keras.applications.{}".format(model_name))
         model = model(input_shape=input_shape)
-    elif model_name in SEGMENTATION_MODEL_NAMES:
-        model = keras_segmentation.models.model_from_name[model_name]
-        if input_shape is not None:
-            assert input_shape[2] == 3, "Can only segment 3-channel, channel-last images"
-            model = model(n_classes=NUM_SEGMENTATION_CLASSES, input_height=input_shape[0], input_width=input_shape[1])
-        else:
-            model = model(n_classes=NUM_SEGMENTATION_CLASSES)
+    # elif model_name in SEGMENTATION_MODEL_NAMES:
+    #     model = keras_segmentation.models.model_from_name[model_name]
+    #     if input_shape is not None:
+    #         assert input_shape[2] == 3, "Can only segment 3-channel, channel-last images"
+    #         model = model(n_classes=NUM_SEGMENTATION_CLASSES, input_height=input_shape[0], input_width=input_shape[1])
+    #     else:
+    #         model = model(n_classes=NUM_SEGMENTATION_CLASSES)
     else:
         raise NotImplementedError("Model {} not available".format(model_name))
 
