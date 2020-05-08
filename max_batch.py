@@ -6,6 +6,7 @@ import pathlib
 import shutil
 from collections import defaultdict
 from typing import Dict, List
+import numpy as np
 
 import tensorflow as tf
 
@@ -59,7 +60,13 @@ if __name__ == "__main__":
         cost_model.fit()
         cost_model.plot_costs()
 
-    model = get_keras_model(model_name, input_shape=args.input_shape)
+    batch_size = 2000
+    (x_train, y_train), (x_test, y_test) = tf.keras.datasets.cifar10.load_data()
+    x_train, x_test = x_train / 255.0, x_test / 255.0
+    x_train, y_train = x_train.astype(np.float32), y_train.astype(np.float32)
+    train_ds = tf.data.Dataset.from_tensor_slices((x_train, y_train)).batch(batch_size)
+
+    model = get_keras_model(model_name, input_shape=x_train[0].shape)
 #    tf.keras.utils.plot_model(model, to_file=log_base / f"plot_{model_name}.png", show_shapes=True,
 #                              show_layer_names=True)
 
