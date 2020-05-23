@@ -25,7 +25,7 @@ GB = 1000 * 1000 * 1000
 def extract_params():
     parser = argparse.ArgumentParser()
     parser.add_argument('--platform', default="flops", choices=PLATFORM_CHOICES)
-    parser.add_argument('--model-name', default="VGG16", choices=list(sorted(MODEL_NAMES)))
+    parser.add_argument('--model-name', default="VGG19", choices=list(sorted(MODEL_NAMES)))
     parser.add_argument("-s", "--input-shape", type=int, nargs="+", default=[])
     parser.add_argument("--batch-size-min", type=int, default=1)
     parser.add_argument("--num-threads", type=int, default=1)
@@ -62,7 +62,8 @@ if __name__ == "__main__":
     tf.keras.utils.plot_model(model, to_file=log_base / f"plot_{model_name}.png", show_shapes=True,
                               show_layer_names=True)
 
-    platform_ram = platform_memory("p32xlarge")
+    #platform_ram = platform_memory("flops")
+    platform_ram = platform_memory(args.platform)
     bs_futures: Dict[int, List] = defaultdict(list)
     bs_fwd2xcost: Dict[int, int] = {}
     # load model at batch size
@@ -74,7 +75,7 @@ if __name__ == "__main__":
                   'LogFile': str(log_base / f"max_bs_{model_name}.solve.log"),
                   'Threads': args.num_threads,
                   'TimeLimit': math.inf}
-    ilp_solver = MaxBatchILPSolver(g, budget=platform_memory("p32xlarge") - g.cost_ram_fixed, model_file=model_file,
+    ilp_solver = MaxBatchILPSolver(g, budget=platform_ram - g.cost_ram_fixed, model_file=model_file,
                                    gurobi_params=param_dict, cpu_fwd_factor=2)
     ilp_solver.build_model()
     result, batch_size = ilp_solver.solve()
